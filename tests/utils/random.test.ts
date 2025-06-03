@@ -55,7 +55,8 @@ describe('RandomUtils', () => {
             tileValueDistribution: [
                 { value: 2, weight: 9 },
                 { value: 4, weight: 1 }
-            ]
+            ],
+            mergeLogic: (v1, v2) => v1 === v2 ? { mergedValue: v1 + v2, scoreEarned: v1 + v2 } : null
         };
 
         it('should place a tile on an empty board', () => {
