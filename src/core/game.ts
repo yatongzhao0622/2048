@@ -132,9 +132,10 @@ export function move(state: Readonly<GameState>, direction: Direction): GameStat
         state.config.mergeLogic
     );
 
-    // If board didn't change, return current state
+    // If board didn't change, check if game is over
     if (!moveResult.boardChanged) {
-        return state;
+        const isGameOver = !hasAvailableMoves(state.board, state.config.mergeLogic);
+        return isGameOver ? { ...state, gameStatus: 'game-over' } : state;
     }
 
     // Place a new tile
