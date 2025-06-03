@@ -1,86 +1,109 @@
-import { createGame, move, getBoard, getScore, defaultConfig } from '../src/core/game';
-import type { Direction } from '../src/types';
+/**
+ * Basic example demonstrating core functionality of the 2048 game library.
+ * This example shows:
+ * 1. Creating a game with default settings
+ * 2. Creating a game with custom configuration
+ * 3. Making moves and handling game state
+ * 4. Visualizing the game board
+ */
+
+import { 
+    createGame, 
+    move, 
+    getBoard, 
+    getScore, 
+    checkIfGameOver,
+    GameConfig,
+    GameState 
+} from '../src';
 
 /**
- * Example of playing a 2048 game
+ * Formats a board for console display.
+ * Pads numbers for alignment and adds grid lines.
  */
-function playGame() {
-    // Create a new game with default settings
-    let game = createGame();
-    console.log('New game created!');
-    console.log('Initial board:');
-    printBoard(game.board);
-    console.log('Score:', getScore(game));
-
-    // Example of making moves
-    const moves: Direction[] = ['right', 'up', 'left', 'down'];
-    for (let i = 0; i < moves.length; i++) {
-        console.log(`\nMaking move: ${moves[i]}`);
-        game = move(game, moves[i]);
-        console.log('Board after move:');
-        printBoard(game.board);
-        console.log('Score:', getScore(game));
-
-        if (game.gameStatus === 'game-over') {
-            console.log('\nGame Over!');
-            break;
-        }
-    }
+function formatBoard(board: ReadonlyArray<ReadonlyArray<number>>): string {
+    const cellWidth = 6;  // Width for each cell including padding
+    const horizontalLine = '-'.repeat(board.length * cellWidth + board.length + 1);
+    
+    return board.map(row => 
+        '|' + row.map(cell => 
+            cell === 0 ? ' '.repeat(cellWidth) : cell.toString().padStart(cellWidth)
+        ).join('|') + '|'
+    ).join('\n' + horizontalLine + '\n');
 }
 
 /**
- * Example of playing a game with custom configuration
+ * Prints the current game state.
  */
-function playCustomGame() {
-    // Create a game with custom settings
-    const customConfig = {
-        boardSize: 3, // 3x3 board
-        numberOfInitialTiles: 3, // Start with 3 tiles
-        tileValueDistribution: [ // Custom tile distribution
-            { value: 2, weight: 4 },
-            { value: 4, weight: 1 }
-        ]
-    };
-
-    let game = createGame(customConfig);
-    console.log('\nCustom game created!');
-    console.log('Initial board:');
-    printBoard(game.board);
-    console.log('Score:', getScore(game));
-
-    // Make a few moves
-    const moves: Direction[] = ['left', 'up'];
-    for (const direction of moves) {
-        console.log(`\nMaking move: ${direction}`);
-        game = move(game, direction);
-        console.log('Board after move:');
-        printBoard(game.board);
-        console.log('Score:', getScore(game));
-    }
-}
-
-/**
- * Helper function to print the game board
- */
-function printBoard(board: ReadonlyArray<ReadonlyArray<number>>) {
+function printGameState(state: GameState) {
+    const board = getBoard(state);
     const cellWidth = 6;
-    const horizontalLine = '-'.repeat((cellWidth + 1) * board.length + 1);
+    const horizontalLine = '-'.repeat(board.length * cellWidth + board.length + 1);
 
+    console.log('\nBoard:');
     console.log(horizontalLine);
-    for (const row of board) {
-        let line = '|';
-        for (const cell of row) {
-            line += cell === 0 ? ' '.repeat(cellWidth) : cell.toString().padStart(cellWidth);
-            line += '|';
-        }
-        console.log(line);
-        console.log(horizontalLine);
-    }
+    console.log(formatBoard(board));
+    console.log(horizontalLine);
+    console.log(`Score: ${getScore(state)}`);
+    console.log(`Status: ${state.gameStatus}`);
+    console.log();
 }
 
-// Run the examples
-console.log('=== Basic Game Example ===');
-playGame();
+// Example 1: Default Game
+console.log('Example 1: Default Game\n');
+let game = createGame();
 
-console.log('\n=== Custom Game Example ===');
-playCustomGame(); 
+// Make some moves
+const moves = ['left', 'up', 'right', 'down'] as const;
+for (const direction of moves) {
+    console.log(`Moving ${direction}...`);
+    game = move(game, direction);
+    printGameState(game);
+}
+
+// Example 2: Custom Game
+console.log('\nExample 2: Custom Game\n');
+
+const customConfig: Partial<GameConfig> = {
+    boardSize: 3,                    // Smaller board
+    numberOfInitialTiles: 3,         // More initial tiles
+    tileValueDistribution: [         // Different tile distribution
+        { value: 2, weight: 7 },     // 70% chance
+        { value: 4, weight: 3 }      // 30% chance
+    ],
+    mergeLogic: (v1: number, v2: number) => {  // Custom merge rules
+        if (v1 === v2) {
+            return {
+                mergedValue: v1 * 2,
+                scoreEarned: v1       // Score = value of one tile
+            };
+        }
+        return null;
+    }
+};
+
+let customGame = createGame(customConfig);
+console.log('Initial state:');
+printGameState(customGame);
+
+// Play until game over
+let moveCount = 0;
+const maxMoves = 20;  // Prevent infinite loop in case of bugs
+
+while (!checkIfGameOver(customGame) && moveCount < maxMoves) {
+    // Rotate through moves
+    const direction = moves[moveCount % moves.length];
+    console.log(`Move ${moveCount + 1}: ${direction}`);
+    
+    customGame = move(customGame, direction);
+    printGameState(customGame);
+    
+    moveCount++;
+}
+
+if (checkIfGameOver(customGame)) {
+    console.log('Game Over!');
+    console.log(`Final score: ${getScore(customGame)}`);
+} else {
+    console.log('Maximum moves reached');
+} 

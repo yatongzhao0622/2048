@@ -1,10 +1,26 @@
+/**
+ * @module core/game
+ * @description Core game logic for the 2048 game implementation.
+ * This module provides the main public interface for creating and managing a 2048 game.
+ */
+
 import type { GameConfig, GameState, Direction, MoveResult } from '../types';
 import { _placeNewTileOnBoard } from '../utils/random';
 import { _executeMoveOnBoard } from '../utils/board';
 
 /**
- * Default merge logic for 2048 game
- * Merges equal values and doubles the score
+ * Default merge logic for the 2048 game.
+ * When two equal values collide, they merge into their sum and add to the score.
+ * 
+ * @param v1 - The first value to compare
+ * @param v2 - The second value to compare
+ * @returns An object containing the merged value and points earned if the values can merge,
+ *          or null if they cannot merge
+ * @example
+ * ```typescript
+ * defaultMergeLogic(2, 2) // returns { mergedValue: 4, scoreEarned: 4 }
+ * defaultMergeLogic(2, 4) // returns null
+ * ```
  */
 export const defaultMergeLogic: NonNullable<GameConfig['mergeLogic']> = (v1: number, v2: number) => {
     if (v1 === v2) {
@@ -17,7 +33,14 @@ export const defaultMergeLogic: NonNullable<GameConfig['mergeLogic']> = (v1: num
 };
 
 /**
- * Default configuration for 2048 game
+ * Default configuration for a standard 2048 game.
+ * Creates a 4x4 board with 2 initial tiles and standard tile distribution.
+ * 
+ * @property boardSize - Size of the game board (4 for standard game)
+ * @property initialSeed - Random seed for deterministic behavior
+ * @property numberOfInitialTiles - Number of tiles to place at game start (2 for standard game)
+ * @property tileValueDistribution - Weighted distribution of tile values (90% 2s, 10% 4s)
+ * @property mergeLogic - Function defining how tiles merge
  */
 export const defaultConfig: GameConfig = {
     boardSize: 4,
@@ -31,7 +54,11 @@ export const defaultConfig: GameConfig = {
 };
 
 /**
- * Creates an empty board of specified size
+ * Creates an empty board of specified size.
+ * 
+ * @private
+ * @param size - The size of the board (both width and height)
+ * @returns A square board filled with zeros
  */
 function createEmptyBoard(size: number): ReadonlyArray<ReadonlyArray<number>> {
     return Array(size).fill(null).map(() => 
@@ -40,7 +67,12 @@ function createEmptyBoard(size: number): ReadonlyArray<ReadonlyArray<number>> {
 }
 
 /**
- * Checks if there are any possible moves left
+ * Checks if there are any possible moves left.
+ * 
+ * @private
+ * @param board - The current game board
+ * @param mergeLogic - Function defining how tiles can merge
+ * @returns True if moves are available, false if game is over
  */
 function hasAvailableMoves(
     board: ReadonlyArray<ReadonlyArray<number>>,
@@ -73,7 +105,24 @@ function hasAvailableMoves(
 }
 
 /**
- * Creates a new game with the specified configuration
+ * Creates a new game with the specified configuration.
+ * 
+ * @param config - Optional partial configuration to override default settings
+ * @returns A new game state with initial tiles placed
+ * @example
+ * ```typescript
+ * // Create a standard 4x4 game
+ * const game = createGame();
+ * 
+ * // Create a custom 3x3 game with different tile distribution
+ * const customGame = createGame({
+ *   boardSize: 3,
+ *   tileValueDistribution: [
+ *     { value: 2, weight: 4 },
+ *     { value: 4, weight: 1 }
+ *   ]
+ * });
+ * ```
  */
 export function createGame(config: Partial<GameConfig> = {}): GameState {
     const finalConfig: GameConfig = { ...defaultConfig, ...config };
@@ -97,28 +146,78 @@ export function createGame(config: Partial<GameConfig> = {}): GameState {
 }
 
 /**
- * Gets the current board state
+ * Gets the current board state.
+ * The board is returned as a readonly 2D array of numbers.
+ * 
+ * @param state - The current game state
+ * @returns The current board configuration
+ * @example
+ * ```typescript
+ * const board = getBoard(game);
+ * // board might look like:
+ * // [[2, 0, 0, 0],
+ * //  [0, 2, 0, 0],
+ * //  [0, 0, 0, 0],
+ * //  [0, 0, 0, 0]]
+ * ```
  */
 export function getBoard(state: Readonly<GameState>): ReadonlyArray<ReadonlyArray<number>> {
     return state.board;
 }
 
 /**
- * Gets the current score
+ * Gets the current score.
+ * The score increases when tiles merge, adding the value of the merged tile.
+ * 
+ * @param state - The current game state
+ * @returns The current score
+ * @example
+ * ```typescript
+ * const score = getScore(game); // e.g., 24 after merging two 4s and two 8s
+ * ```
  */
 export function getScore(state: Readonly<GameState>): number {
     return state.score;
 }
 
 /**
- * Checks if the game is over
+ * Checks if the game is over.
+ * A game is over when there are no empty cells and no possible merges.
+ * 
+ * @param state - The current game state
+ * @returns True if no moves are possible, false otherwise
+ * @example
+ * ```typescript
+ * if (checkIfGameOver(game)) {
+ *   console.log('Game Over! Final score:', getScore(game));
+ * }
+ * ```
  */
 export function checkIfGameOver(state: Readonly<GameState>): boolean {
     return !hasAvailableMoves(state.board, state.config.mergeLogic);
 }
 
 /**
- * Executes a move in the specified direction
+ * Executes a move in the specified direction.
+ * This is the main game mechanic that:
+ * 1. Slides all tiles in the specified direction
+ * 2. Merges adjacent equal tiles
+ * 3. Places a new tile in a random empty cell
+ * 4. Updates the score and game status
+ * 
+ * The function maintains immutability - it returns a new state rather than modifying the existing one.
+ * 
+ * @param state - The current game state
+ * @param direction - The direction to move tiles ('up', 'down', 'left', 'right')
+ * @returns A new game state after the move is executed
+ * @example
+ * ```typescript
+ * // Move all tiles left
+ * game = move(game, 'left');
+ * 
+ * // Chain moves
+ * game = move(move(game, 'up'), 'right');
+ * ```
  */
 export function move(state: Readonly<GameState>, direction: Direction): GameState {
     if (state.gameStatus !== 'playing') {
