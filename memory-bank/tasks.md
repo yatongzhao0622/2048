@@ -29,15 +29,15 @@
   - [x] _placeNewTileOnBoard implementation
   - [x] Unit tests
 
-- [ ] BoardOperations Module (src/utils/board.ts)
-  - [ ] slide implementation
-  - [ ] mergeLine implementation
-  - [ ] processLine implementation
-  - [ ] transpose & reverseItems implementation
-  - [ ] _executeMoveOnBoard implementation
-  - [ ] Unit tests
+- [x] BoardOperations Module (src/utils/board.ts)
+  - [x] slide implementation
+  - [x] mergeLine implementation
+  - [x] processLine implementation
+  - [x] transpose & reverseRows implementation
+  - [x] _executeMoveOnBoard implementation
+  - [x] Unit tests
 
-### 3. Game Logic Implementation (Days 4-5)
+### 3. Game Logic Implementation (Days 4-5) [NEXT]
 - [ ] Core Game Module (src/core/game.ts)
   - [ ] createGame implementation
   - [ ] getBoard & getScore implementation
@@ -66,7 +66,7 @@
   - [ ] Optimize critical paths
 
 ## Current Focus
-Implementing BoardOperations module after completing RandomUtils implementation
+Implementing Core Game Module after completing BoardOperations implementation
 
 ## Dependencies [INSTALLED]
 - TypeScript ✓
@@ -79,4 +79,5 @@ Implementing BoardOperations module after completing RandomUtils implementation
 - Project structure created
 - Core type definitions implemented
 - RandomUtils module implemented and tested
-- Ready to begin BoardOperations implementation
+- BoardOperations module implemented and tested
+- Ready to begin Core Game implementation
