@@ -4,7 +4,7 @@
  * This module provides the main public interface for creating and managing a 2048 game.
  */
 
-import type { GameConfig, GameState, Direction, MoveResult } from '../types';
+import type { GameConfig, GameState, Direction } from '../types';
 import { _placeNewTileOnBoard } from '../utils/random';
 import { _executeMoveOnBoard } from '../utils/board';
 
