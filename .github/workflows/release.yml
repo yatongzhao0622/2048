@@ -31,8 +31,12 @@ jobs:
       - name: Check test coverage (80%)
         run: |
           echo "Checking coverage..."
-          if ! npm run test:coverage | grep -q "All files.*[8-9][0-9]\.[0-9].*|.*100\.0.*"; then
+          # Run coverage and save output
+          npm run test:coverage > coverage_output.txt
+          # Check if All files line shows coverage >= 80%
+          if ! grep "All files" coverage_output.txt | grep -E "[8-9][0-9]|100" > /dev/null; then
             echo "Test coverage is below 80% threshold"
+            cat coverage_output.txt
             exit 1
           fi
 
