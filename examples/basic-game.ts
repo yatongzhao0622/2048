@@ -67,6 +67,7 @@ console.log('\nExample 2: Custom Game\n');
 const customConfig: Partial<GameConfig> = {
     boardSize: 3,                    // Smaller board
     numberOfInitialTiles: 3,         // More initial tiles
+    initialSeed: 12345,              // Seed for random number generation
     tileValueDistribution: [         // Different tile distribution
         { value: 2, weight: 7 },     // 70% chance
         { value: 4, weight: 3 }      // 30% chance
