@@ -1,6 +1,6 @@
 {
   "name": "@yatongzhao0622/2048-core",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "Core library for the 2048 game, implemented with a functional paradigm and TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
