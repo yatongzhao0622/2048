@@ -61,9 +61,10 @@ export const defaultConfig: GameConfig = {
  * @returns A square board filled with zeros
  */
 function createEmptyBoard(size: number): ReadonlyArray<ReadonlyArray<number>> {
-  return Array(size).fill(null).map(() => 
-    Array(size).fill(0),
+  const board: number[][] = Array.from({ length: size }, () => 
+    Array.from({ length: size }, () => 0)
   );
+  return board as ReadonlyArray<ReadonlyArray<number>>;
 }
 
 /**

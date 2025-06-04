@@ -6,9 +6,14 @@ import type { GameConfig, MoveResult } from '../types/index.js';
  * @returns New array with numbers slid to the left
  */
 export function slide(row: ReadonlyArray<number>): ReadonlyArray<number> {
-  const nonZeroNums = row.filter(x => x !== 0);
-  const zeros = Array(row.length - nonZeroNums.length).fill(0);
-  return [...nonZeroNums, ...zeros];
+  const nonZeroNums: number[] = [];
+  for (const num of row) {
+    if (num !== 0) {
+      nonZeroNums.push(num);
+    }
+  }
+  const zeros: number[] = new Array<number>(row.length - nonZeroNums.length).fill(0);
+  return [...nonZeroNums, ...zeros] as ReadonlyArray<number>;
 }
 
 /**
