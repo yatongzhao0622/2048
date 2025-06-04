@@ -24,3 +24,19 @@
    - Deterministic PRNG
    - Seed management
    - Weighted value selection
+
+## Workflow Patterns
+1. GitHub Flow
+   - Main branch protection
+   - Feature branch workflow
+   - PR-based reviews
+
+2. Continuous Integration
+   - Automated testing
+   - Code quality checks
+   - Coverage requirements
+
+3. Continuous Deployment
+   - Semantic versioning
+   - Automated releases
+   - Package publishing
