@@ -4,9 +4,9 @@
  * This module provides the main public interface for creating and managing a 2048 game.
  */
 
-import type { GameConfig, GameState, Direction } from '../types';
-import { _placeNewTileOnBoard } from '../utils/random';
-import { _executeMoveOnBoard } from '../utils/board';
+import type { GameConfig, GameState, Direction } from '../types/index.js';
+import { _placeNewTileOnBoard } from '../utils/random.js';
+import { _executeMoveOnBoard } from '../utils/board.js';
 
 /**
  * Default merge logic for the 2048 game.
@@ -23,13 +23,13 @@ import { _executeMoveOnBoard } from '../utils/board';
  * ```
  */
 export const defaultMergeLogic: NonNullable<GameConfig['mergeLogic']> = (v1: number, v2: number) => {
-    if (v1 === v2) {
-        return {
-            mergedValue: v1 + v2,
-            scoreEarned: v1 + v2
-        };
-    }
-    return null;
+  if (v1 === v2) {
+    return {
+      mergedValue: v1 + v2,
+      scoreEarned: v1 + v2,
+    };
+  }
+  return null;
 };
 
 /**
@@ -43,14 +43,14 @@ export const defaultMergeLogic: NonNullable<GameConfig['mergeLogic']> = (v1: num
  * @property mergeLogic - Function defining how tiles merge
  */
 export const defaultConfig: GameConfig = {
-    boardSize: 4,
-    initialSeed: Date.now(),
-    numberOfInitialTiles: 2,
-    tileValueDistribution: [
-        { value: 2, weight: 9 },
-        { value: 4, weight: 1 }
-    ],
-    mergeLogic: defaultMergeLogic
+  boardSize: 4,
+  initialSeed: Date.now(),
+  numberOfInitialTiles: 2,
+  tileValueDistribution: [
+    { value: 2, weight: 9 },
+    { value: 4, weight: 1 },
+  ],
+  mergeLogic: defaultMergeLogic,
 };
 
 /**
@@ -61,9 +61,9 @@ export const defaultConfig: GameConfig = {
  * @returns A square board filled with zeros
  */
 function createEmptyBoard(size: number): ReadonlyArray<ReadonlyArray<number>> {
-    return Array(size).fill(null).map(() => 
-        Array(size).fill(0)
-    );
+  return Array(size).fill(null).map(() => 
+    Array(size).fill(0),
+  );
 }
 
 /**
@@ -75,33 +75,33 @@ function createEmptyBoard(size: number): ReadonlyArray<ReadonlyArray<number>> {
  * @returns True if moves are available, false if game is over
  */
 function hasAvailableMoves(
-    board: ReadonlyArray<ReadonlyArray<number>>,
-    mergeLogic: NonNullable<GameConfig['mergeLogic']>
+  board: ReadonlyArray<ReadonlyArray<number>>,
+  mergeLogic: NonNullable<GameConfig['mergeLogic']>,
 ): boolean {
-    // Check for empty cells
-    if (board.some(row => row.some(cell => cell === 0))) {
+  // Check for empty cells
+  if (board.some(row => row.some(cell => cell === 0))) {
+    return true;
+  }
+
+  // Check for possible merges horizontally
+  for (let r = 0; r < board.length; r++) {
+    for (let c = 0; c < board[r].length - 1; c++) {
+      if (mergeLogic(board[r][c], board[r][c + 1]) !== null) {
         return true;
+      }
     }
+  }
 
-    // Check for possible merges horizontally
-    for (let r = 0; r < board.length; r++) {
-        for (let c = 0; c < board[r].length - 1; c++) {
-            if (mergeLogic(board[r][c], board[r][c + 1]) !== null) {
-                return true;
-            }
-        }
+  // Check for possible merges vertically
+  for (let r = 0; r < board.length - 1; r++) {
+    for (let c = 0; c < board[r].length; c++) {
+      if (mergeLogic(board[r][c], board[r + 1][c]) !== null) {
+        return true;
+      }
     }
+  }
 
-    // Check for possible merges vertically
-    for (let r = 0; r < board.length - 1; r++) {
-        for (let c = 0; c < board[r].length; c++) {
-            if (mergeLogic(board[r][c], board[r + 1][c]) !== null) {
-                return true;
-            }
-        }
-    }
-
-    return false;
+  return false;
 }
 
 /**
@@ -125,24 +125,24 @@ function hasAvailableMoves(
  * ```
  */
 export function createGame(config: Partial<GameConfig> = {}): GameState {
-    const finalConfig: GameConfig = { ...defaultConfig, ...config };
-    let board = createEmptyBoard(finalConfig.boardSize);
-    let currentSeed = finalConfig.initialSeed;
+  const finalConfig: GameConfig = { ...defaultConfig, ...config };
+  let board = createEmptyBoard(finalConfig.boardSize);
+  let currentSeed = finalConfig.initialSeed;
 
-    // Place initial tiles
-    for (let i = 0; i < finalConfig.numberOfInitialTiles; i++) {
-        const result = _placeNewTileOnBoard(board, finalConfig, currentSeed);
-        board = result.newBoardWithTile;
-        currentSeed = result.nextSeed;
-    }
+  // Place initial tiles
+  for (let i = 0; i < finalConfig.numberOfInitialTiles; i++) {
+    const result = _placeNewTileOnBoard(board, finalConfig, currentSeed);
+    board = result.newBoardWithTile;
+    currentSeed = result.nextSeed;
+  }
 
-    return {
-        board,
-        score: 0,
-        config: finalConfig,
-        seed: currentSeed,
-        gameStatus: 'playing'
-    };
+  return {
+    board,
+    score: 0,
+    config: finalConfig,
+    seed: currentSeed,
+    gameStatus: 'playing',
+  };
 }
 
 /**
@@ -162,7 +162,7 @@ export function createGame(config: Partial<GameConfig> = {}): GameState {
  * ```
  */
 export function getBoard(state: Readonly<GameState>): ReadonlyArray<ReadonlyArray<number>> {
-    return state.board;
+  return state.board;
 }
 
 /**
@@ -177,7 +177,7 @@ export function getBoard(state: Readonly<GameState>): ReadonlyArray<ReadonlyArra
  * ```
  */
 export function getScore(state: Readonly<GameState>): number {
-    return state.score;
+  return state.score;
 }
 
 /**
@@ -194,7 +194,7 @@ export function getScore(state: Readonly<GameState>): number {
  * ```
  */
 export function checkIfGameOver(state: Readonly<GameState>): boolean {
-    return !hasAvailableMoves(state.board, state.config.mergeLogic);
+  return !hasAvailableMoves(state.board, state.config.mergeLogic);
 }
 
 /**
@@ -220,39 +220,39 @@ export function checkIfGameOver(state: Readonly<GameState>): boolean {
  * ```
  */
 export function move(state: Readonly<GameState>, direction: Direction): GameState {
-    if (state.gameStatus !== 'playing') {
-        return state;
-    }
+  if (state.gameStatus !== 'playing') {
+    return state;
+  }
 
-    // Execute the move
-    const moveResult = _executeMoveOnBoard(
-        state.board,
-        direction,
-        state.config.mergeLogic
-    );
+  // Execute the move
+  const moveResult = _executeMoveOnBoard(
+    state.board,
+    direction,
+    state.config.mergeLogic,
+  );
 
-    // If board didn't change, check if game is over
-    if (!moveResult.boardChanged) {
-        const isGameOver = !hasAvailableMoves(state.board, state.config.mergeLogic);
-        return isGameOver ? { ...state, gameStatus: 'game-over' } : state;
-    }
+  // If board didn't change, check if game is over
+  if (!moveResult.boardChanged) {
+    const isGameOver = !hasAvailableMoves(state.board, state.config.mergeLogic);
+    return isGameOver ? { ...state, gameStatus: 'game-over' } : state;
+  }
 
-    // Place a new tile
-    const placeResult = _placeNewTileOnBoard(
-        moveResult.newBoard,
-        state.config,
-        state.seed
-    );
+  // Place a new tile
+  const placeResult = _placeNewTileOnBoard(
+    moveResult.newBoard,
+    state.config,
+    state.seed,
+  );
 
-    // Check if game is over
-    const newBoard = placeResult.newBoardWithTile;
-    const isGameOver = !hasAvailableMoves(newBoard, state.config.mergeLogic);
+  // Check if game is over
+  const newBoard = placeResult.newBoardWithTile;
+  const isGameOver = !hasAvailableMoves(newBoard, state.config.mergeLogic);
 
-    return {
-        board: newBoard,
-        score: state.score + moveResult.pointsEarned,
-        config: state.config,
-        seed: placeResult.nextSeed,
-        gameStatus: isGameOver ? 'game-over' : 'playing'
-    };
+  return {
+    board: newBoard,
+    score: state.score + moveResult.pointsEarned,
+    config: state.config,
+    seed: placeResult.nextSeed,
+    gameStatus: isGameOver ? 'game-over' : 'playing',
+  };
 }

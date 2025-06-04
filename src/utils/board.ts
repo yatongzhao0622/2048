@@ -1,4 +1,4 @@
-import type { GameConfig, MoveResult } from '../types';
+import type { GameConfig, MoveResult } from '../types/index.js';
 
 /**
  * Slides all non-zero numbers in a row to the left, maintaining their order
@@ -6,9 +6,9 @@ import type { GameConfig, MoveResult } from '../types';
  * @returns New array with numbers slid to the left
  */
 export function slide(row: ReadonlyArray<number>): ReadonlyArray<number> {
-    const nonZeroNums = row.filter(x => x !== 0);
-    const zeros = Array(row.length - nonZeroNums.length).fill(0);
-    return [...nonZeroNums, ...zeros];
+  const nonZeroNums = row.filter(x => x !== 0);
+  const zeros = Array(row.length - nonZeroNums.length).fill(0);
+  return [...nonZeroNums, ...zeros];
 }
 
 /**
@@ -18,32 +18,32 @@ export function slide(row: ReadonlyArray<number>): ReadonlyArray<number> {
  * @returns Object containing new row, points earned, and whether the row changed
  */
 export function mergeLine(
-    row: ReadonlyArray<number>,
-    mergeLogic: NonNullable<GameConfig['mergeLogic']>
+  row: ReadonlyArray<number>,
+  mergeLogic: NonNullable<GameConfig['mergeLogic']>,
 ): { newRow: ReadonlyArray<number>; pointsEarned: number; lineChanged: boolean } {
-    const result: number[] = [...row];
-    let pointsEarned = 0;
-    let lineChanged = false;
+  const result: number[] = [...row];
+  let pointsEarned = 0;
+  let lineChanged = false;
 
-    for (let i = 0; i < result.length - 1; i++) {
-        if (result[i] !== 0) {
-            const mergeResult = mergeLogic(result[i], result[i + 1]);
-            if (mergeResult !== null) {
-                result[i] = mergeResult.mergedValue;
-                result[i + 1] = 0;
-                pointsEarned += mergeResult.scoreEarned;
-                lineChanged = true;
-                // Skip the merged tile
-                i++;
-            }
-        }
+  for (let i = 0; i < result.length - 1; i++) {
+    if (result[i] !== 0) {
+      const mergeResult = mergeLogic(result[i], result[i + 1]);
+      if (mergeResult !== null) {
+        result[i] = mergeResult.mergedValue;
+        result[i + 1] = 0;
+        pointsEarned += mergeResult.scoreEarned;
+        lineChanged = true;
+        // Skip the merged tile
+        i++;
+      }
     }
+  }
 
-    return {
-        newRow: result,
-        pointsEarned,
-        lineChanged
-    };
+  return {
+    newRow: result,
+    pointsEarned,
+    lineChanged,
+  };
 }
 
 /**
@@ -53,22 +53,22 @@ export function mergeLine(
  * @returns Object containing new row, points earned, and whether the line changed
  */
 export function processLine(
-    row: ReadonlyArray<number>,
-    mergeLogic: NonNullable<GameConfig['mergeLogic']>
+  row: ReadonlyArray<number>,
+  mergeLogic: NonNullable<GameConfig['mergeLogic']>,
 ): { newRow: ReadonlyArray<number>; pointsEarned: number; lineChanged: boolean } {
-    const slidResult = slide(row);
-    const mergeResult = mergeLine(slidResult, mergeLogic);
+  const slidResult = slide(row);
+  const mergeResult = mergeLine(slidResult, mergeLogic);
     
-    // If merging changed the line, slide again to fill gaps
-    const finalRow = mergeResult.lineChanged ? slide(mergeResult.newRow) : mergeResult.newRow;
+  // If merging changed the line, slide again to fill gaps
+  const finalRow = mergeResult.lineChanged ? slide(mergeResult.newRow) : mergeResult.newRow;
     
-    const lineChanged = !row.every((val, idx) => val === finalRow[idx]);
+  const lineChanged = !row.every((val, idx) => val === finalRow[idx]);
     
-    return {
-        newRow: finalRow,
-        pointsEarned: mergeResult.pointsEarned,
-        lineChanged
-    };
+  return {
+    newRow: finalRow,
+    pointsEarned: mergeResult.pointsEarned,
+    lineChanged,
+  };
 }
 
 /**
@@ -77,11 +77,11 @@ export function processLine(
  * @returns Transposed array
  */
 export function transpose<T>(
-    board: ReadonlyArray<ReadonlyArray<T>>
+  board: ReadonlyArray<ReadonlyArray<T>>,
 ): ReadonlyArray<ReadonlyArray<T>> {
-    return board[0].map((_, colIndex) => 
-        board.map(row => row[colIndex])
-    );
+  return board[0].map((_, colIndex) => 
+    board.map(row => row[colIndex]),
+  );
 }
 
 /**
@@ -90,9 +90,9 @@ export function transpose<T>(
  * @returns New board with reversed rows
  */
 export function reverseRows<T>(
-    board: ReadonlyArray<ReadonlyArray<T>>
+  board: ReadonlyArray<ReadonlyArray<T>>,
 ): ReadonlyArray<ReadonlyArray<T>> {
-    return board.map(row => [...row].reverse());
+  return board.map(row => [...row].reverse());
 }
 
 /**
@@ -103,45 +103,45 @@ export function reverseRows<T>(
  * @returns Object containing new board state and points earned
  */
 export function _executeMoveOnBoard(
-    board: ReadonlyArray<ReadonlyArray<number>>,
-    direction: 'up' | 'down' | 'left' | 'right',
-    mergeLogic: NonNullable<GameConfig['mergeLogic']>
+  board: ReadonlyArray<ReadonlyArray<number>>,
+  direction: 'up' | 'down' | 'left' | 'right',
+  mergeLogic: NonNullable<GameConfig['mergeLogic']>,
 ): MoveResult {
-    let processedBoard: ReadonlyArray<ReadonlyArray<number>> = board;
-    let totalPoints = 0;
-    let boardChanged = false;
+  let processedBoard: ReadonlyArray<ReadonlyArray<number>> = board;
+  let totalPoints = 0;
+  let boardChanged = false;
 
-    // Transform board based on direction
-    if (direction === 'up') {
-        processedBoard = transpose(board);
-    } else if (direction === 'down') {
-        processedBoard = reverseRows(transpose(board));
-    } else if (direction === 'right') {
-        processedBoard = reverseRows(board);
-    }
+  // Transform board based on direction
+  if (direction === 'up') {
+    processedBoard = transpose(board);
+  } else if (direction === 'down') {
+    processedBoard = reverseRows(transpose(board));
+  } else if (direction === 'right') {
+    processedBoard = reverseRows(board);
+  }
 
-    // Process each row
-    const processedRows = processedBoard.map(row => {
-        const result = processLine(row, mergeLogic);
-        totalPoints += result.pointsEarned;
-        if (result.lineChanged) boardChanged = true;
-        return result.newRow;
-    });
+  // Process each row
+  const processedRows = processedBoard.map(row => {
+    const result = processLine(row, mergeLogic);
+    totalPoints += result.pointsEarned;
+    if (result.lineChanged) boardChanged = true;
+    return result.newRow;
+  });
 
-    // Transform back based on direction
-    if (direction === 'up') {
-        processedBoard = transpose(processedRows);
-    } else if (direction === 'down') {
-        processedBoard = transpose(reverseRows(processedRows));
-    } else if (direction === 'right') {
-        processedBoard = reverseRows(processedRows);
-    } else {
-        processedBoard = processedRows;
-    }
+  // Transform back based on direction
+  if (direction === 'up') {
+    processedBoard = transpose(processedRows);
+  } else if (direction === 'down') {
+    processedBoard = transpose(reverseRows(processedRows));
+  } else if (direction === 'right') {
+    processedBoard = reverseRows(processedRows);
+  } else {
+    processedBoard = processedRows;
+  }
 
-    return {
-        newBoard: processedBoard,
-        pointsEarned: totalPoints,
-        boardChanged
-    };
+  return {
+    newBoard: processedBoard,
+    pointsEarned: totalPoints,
+    boardChanged,
+  };
 }

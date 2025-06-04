@@ -4,13 +4,15 @@
   "description": "Core library for the 2048 game, implemented with a functional paradigm and TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "lint": "eslint . --ext .js,.ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "build": "tsc -p tsconfig.json",
     "prepare": "husky install",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "example": "NODE_OPTIONS='--loader ts-node/esm' ts-node --esm"
   },
   "repository": {
     "type": "git",
@@ -37,17 +39,20 @@
   "author": "Yatong Zhao",
   "license": "MIT",
   "devDependencies": {
-    "@commitlint/cli": "^19.0.0",
-    "@commitlint/config-conventional": "^19.0.0",
+    "@commitlint/cli": "^17.0.0",
+    "@commitlint/config-conventional": "^17.0.0",
     "@semantic-release/changelog": "^6.0.0",
     "@semantic-release/git": "^10.0.0",
-    "@semantic-release/github": "^9.0.0",
-    "semantic-release": "^21.0.0",
-    "husky": "^9.0.0",
+    "@semantic-release/github": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "semantic-release": "^19.0.0",
+    "husky": "^8.0.0",
     "typescript": "latest",
     "jest": "latest",
     "ts-jest": "latest",
     "@types/jest": "latest",
-    "eslint": "latest"
+    "eslint": "^8.0.0",
+    "ts-node": "^10.9.2"
   }
 }

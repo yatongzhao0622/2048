@@ -1,4 +1,4 @@
-import type { GameConfig, Position, PlaceTileResult } from '../types';
+import type { GameConfig, Position, PlaceTileResult } from '../types/index.js';
 
 /**
  * Linear Congruential Generator (LCG) parameters
@@ -14,9 +14,9 @@ const LCG_M = Math.pow(2, 32); // 2^32
  * @returns Object containing next random value (0 to 1) and next seed
  */
 export function prngNext(seed: number): { value: number; nextSeed: number } {
-    const nextSeed = (LCG_A * seed + LCG_C) % LCG_M;
-    const value = nextSeed / LCG_M; // Normalize to [0,1)
-    return { value, nextSeed };
+  const nextSeed = (LCG_A * seed + LCG_C) % LCG_M;
+  const value = nextSeed / LCG_M; // Normalize to [0,1)
+  return { value, nextSeed };
 }
 
 /**
@@ -26,22 +26,22 @@ export function prngNext(seed: number): { value: number; nextSeed: number } {
  * @returns Selected value based on weights
  */
 export function selectWeightedValue<T>(
-    distribution: ReadonlyArray<{ value: T; weight: number }>,
-    randomNumber: number
+  distribution: ReadonlyArray<{ value: T; weight: number }>,
+  randomNumber: number,
 ): T {
-    const totalWeight = distribution.reduce((sum, item) => sum + item.weight, 0);
-    let cumulativeWeight = 0;
-    const normalizedRandom = randomNumber * totalWeight;
+  const totalWeight = distribution.reduce((sum, item) => sum + item.weight, 0);
+  let cumulativeWeight = 0;
+  const normalizedRandom = randomNumber * totalWeight;
 
-    for (const item of distribution) {
-        cumulativeWeight += item.weight;
-        if (normalizedRandom < cumulativeWeight) {
-            return item.value;
-        }
+  for (const item of distribution) {
+    cumulativeWeight += item.weight;
+    if (normalizedRandom < cumulativeWeight) {
+      return item.value;
     }
+  }
 
-    // Fallback to last item (for randomNumber = 1)
-    return distribution[distribution.length - 1].value;
+  // Fallback to last item (for randomNumber = 1)
+  return distribution[distribution.length - 1].value;
 }
 
 /**
@@ -50,19 +50,19 @@ export function selectWeightedValue<T>(
  * @returns Array of empty cell positions
  */
 function getEmptyCells(
-    board: ReadonlyArray<ReadonlyArray<number>>
+  board: ReadonlyArray<ReadonlyArray<number>>,
 ): ReadonlyArray<Position> {
-    const emptyCells: Position[] = [];
+  const emptyCells: Position[] = [];
     
-    for (let r = 0; r < board.length; r++) {
-        for (let c = 0; c < board[r].length; c++) {
-            if (board[r][c] === 0) {
-                emptyCells.push({ r, c });
-            }
-        }
+  for (let r = 0; r < board.length; r++) {
+    for (let c = 0; c < board[r].length; c++) {
+      if (board[r][c] === 0) {
+        emptyCells.push({ r, c });
+      }
     }
+  }
     
-    return emptyCells;
+  return emptyCells;
 }
 
 /**
@@ -73,43 +73,43 @@ function getEmptyCells(
  * @returns New board state and updated seed
  */
 export function _placeNewTileOnBoard(
-    board: ReadonlyArray<ReadonlyArray<number>>,
-    config: Readonly<GameConfig>,
-    currentSeed: number
+  board: ReadonlyArray<ReadonlyArray<number>>,
+  config: Readonly<GameConfig>,
+  currentSeed: number,
 ): PlaceTileResult {
-    const emptyCells = getEmptyCells(board);
+  const emptyCells = getEmptyCells(board);
     
-    if (emptyCells.length === 0) {
-        return {
-            newBoardWithTile: board,
-            nextSeed: currentSeed,
-            tileAdded: false
-        };
-    }
-
-    // Generate random value for tile
-    const { value: rand1, nextSeed: seedAfterValueChoice } = prngNext(currentSeed);
-    const tileValue = selectWeightedValue(config.tileValueDistribution, rand1);
-
-    // Generate random position
-    const { value: rand2, nextSeed: finalNextSeed } = prngNext(seedAfterValueChoice);
-    const chosenCellIndex = Math.floor(rand2 * emptyCells.length);
-    const chosenCellPosition = emptyCells[chosenCellIndex];
-
-    // Create new board with the tile placed
-    const newBoard = board.map((row, r) =>
-        row.map((cell, c) =>
-            r === chosenCellPosition.r && c === chosenCellPosition.c
-                ? tileValue
-                : cell
-        )
-    );
-
+  if (emptyCells.length === 0) {
     return {
-        newBoardWithTile: newBoard,
-        nextSeed: finalNextSeed,
-        tileAdded: true,
-        newTileValue: tileValue,
-        newTilePosition: chosenCellPosition
+      newBoardWithTile: board,
+      nextSeed: currentSeed,
+      tileAdded: false,
     };
+  }
+
+  // Generate random value for tile
+  const { value: rand1, nextSeed: seedAfterValueChoice } = prngNext(currentSeed);
+  const tileValue = selectWeightedValue(config.tileValueDistribution, rand1);
+
+  // Generate random position
+  const { value: rand2, nextSeed: finalNextSeed } = prngNext(seedAfterValueChoice);
+  const chosenCellIndex = Math.floor(rand2 * emptyCells.length);
+  const chosenCellPosition = emptyCells[chosenCellIndex];
+
+  // Create new board with the tile placed
+  const newBoard = board.map((row, r) =>
+    row.map((cell, c) =>
+      r === chosenCellPosition.r && c === chosenCellPosition.c
+        ? tileValue
+        : cell,
+    ),
+  );
+
+  return {
+    newBoardWithTile: newBoard,
+    nextSeed: finalNextSeed,
+    tileAdded: true,
+    newTileValue: tileValue,
+    newTilePosition: chosenCellPosition,
+  };
 }

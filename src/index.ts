@@ -3,21 +3,16 @@
  * Re-exports all public types and functions.
  */
 
-export {
-    createGame,
-    move,
-    getBoard,
-    getScore,
-    checkIfGameOver,
-    defaultConfig,
-    defaultMergeLogic
-} from './core/game';
+export * from './core/game.js';
+export * from './types/index.js';
+export * from './utils/board.js';
+export * from './utils/random.js';
 
 export type {
-    GameConfig,
-    GameState,
-    Direction,
-    Position,
-    MoveResult,
-    PlaceTileResult
+  GameConfig,
+  GameState,
+  Direction,
+  Position,
+  MoveResult,
+  PlaceTileResult,
 } from './types';
