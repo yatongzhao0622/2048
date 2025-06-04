@@ -30,13 +30,22 @@
    - Main branch protection
    - Feature branch workflow
    - PR-based reviews
+   - Conventional Commits
 
 2. Continuous Integration
    - Automated testing
    - Code quality checks
-   - Coverage requirements
+   - Coverage requirements (80%)
+   - Build verification
 
 3. Continuous Deployment
    - Semantic versioning
    - Automated releases
    - Package publishing
+   - Scoped packages (@yatongzhao0622)
+
+4. Quality Assurance
+   - Pre-commit hooks
+   - Commit message validation
+   - Automated changelog
+   - Release notes generation

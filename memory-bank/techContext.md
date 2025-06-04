@@ -20,7 +20,7 @@
 - GitHub Actions based workflow
 - Semantic versioning (SemVer)
 - Automated testing and coverage (80% minimum)
-- GitHub Packages deployment
+- GitHub Packages deployment (@yatongzhao0622 scope)
 - Conventional Commits enforcement
 
 ## Development Tools
@@ -29,3 +29,4 @@
 - ESLint (Linting)
 - semantic-release
 - husky (Git hooks)
+- commitlint

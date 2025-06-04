@@ -1,24 +1,53 @@
 {
-  "name": "2048",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "@yatongzhao0622/2048-core",
+  "version": "0.0.0-development",
+  "description": "Core library for the 2048 game, implemented with a functional paradigm and TypeScript",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "lint": "eslint . --ext .js,.ts",
     "test": "jest",
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "test:coverage": "jest --coverage",
+    "build": "tsc -p tsconfig.json",
+    "prepare": "husky install",
+    "semantic-release": "semantic-release"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yatongzhao0622/2048.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "2048",
+    "game",
+    "core",
+    "logic",
+    "functional",
+    "typescript"
+  ],
+  "author": "Yatong Zhao",
+  "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^29.5.14",
-    "@types/node": "^22.15.29",
-    "@typescript-eslint/eslint-plugin": "^8.33.1",
-    "@typescript-eslint/parser": "^8.33.1",
-    "eslint": "^9.28.0",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.3.4",
-    "typescript": "^5.8.3"
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/git": "^10.0.0",
+    "@semantic-release/github": "^9.0.0",
+    "semantic-release": "^21.0.0",
+    "husky": "^9.0.0",
+    "typescript": "latest",
+    "jest": "latest",
+    "ts-jest": "latest",
+    "@types/jest": "latest",
+    "eslint": "latest"
   }
 }

@@ -1,6 +1,6 @@
 # 2048 Game Core Library
 
-A TypeScript implementation of the 2048 game core mechanics, focusing on functional programming principles and immutability.
+A TypeScript implementation of the 2048 game core logic, following functional programming principles.
 
 ## Features
 
@@ -14,29 +14,25 @@ A TypeScript implementation of the 2048 game core mechanics, focusing on functio
 ## Installation
 
 ```bash
-npm install @your-username/2048-core
+npm install @yatongzhao0622/2048-core
 ```
 
-## Quick Start
+## Usage
 
 ```typescript
-import { createGame, move, getBoard, getScore, checkIfGameOver } from '@your-username/2048-core';
+import { createGame, move, Direction } from '@yatongzhao0622/2048-core';
 
-// Create a new game with default settings
-let game = createGame();
+// Create a new game
+const game = createGame();
 
-// Make moves
-game = move(game, 'left');
-game = move(game, 'up');
+// Make a move
+const newGame = move(game, Direction.Up);
 
-// Get current state
-const board = getBoard(game);
-const score = getScore(game);
+// Get the current board
+const board = getBoard(newGame);
 
-// Check game status
-if (checkIfGameOver(game)) {
-    console.log(`Game Over! Final score: ${score}`);
-}
+// Check if game is over
+const isGameOver = checkIfGameOver(newGame);
 ```
 
 ## Game Configuration
@@ -44,7 +40,7 @@ if (checkIfGameOver(game)) {
 You can customize various aspects of the game by passing a configuration object:
 
 ```typescript
-import { createGame, GameConfig } from '@your-username/2048-core';
+import { createGame, GameConfig } from '@yatongzhao0622/2048-core';
 
 const customConfig: Partial<GameConfig> = {
     boardSize: 3,                    // Create a 3x3 board
@@ -108,52 +104,74 @@ Complete game state:
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (LTS version)
 - npm or yarn
 
 ### Setup
 
-```bash
-# Clone the repository
-git clone https://github.com/your-username/2048-core.git
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yatongzhao0622/2048.git
+   cd 2048
+   ```
 
-# Install dependencies
-cd 2048-core
-npm install
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-# Run tests
-npm test
+3. Run tests:
+   ```bash
+   npm test
+   ```
+
+### Contributing
+
+This project uses:
+- TypeScript for type safety
+- Jest for testing
+- ESLint for code quality
+- Conventional Commits for commit messages
+- semantic-release for versioning and publishing
+
+#### Commit Messages
+
+We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification. Each commit message should be structured as follows:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
 ```
 
-### Testing
+Types:
+- feat: A new feature
+- fix: A bug fix
+- docs: Documentation only changes
+- style: Changes that do not affect the meaning of the code
+- refactor: A code change that neither fixes a bug nor adds a feature
+- perf: A code change that improves performance
+- test: Adding missing tests or correcting existing tests
+- chore: Changes to the build process or auxiliary tools
 
-The library includes comprehensive test coverage:
-- Unit tests for core functions
-- Integration tests for game flow
-- Edge case testing
-- Random number generation validation
+### CI/CD Pipeline
 
-```bash
-# Run all tests
-npm test
+The project uses GitHub Actions for continuous integration and deployment:
 
-# Run tests with coverage
-npm run test:coverage
+1. On every pull request:
+   - Code linting
+   - Unit tests
+   - Test coverage check (minimum 80%)
+   - Build verification
 
-# Run specific test suite
-npm test -- -t "board operations"
-```
+2. On merge to main:
+   - Automatic version bump based on commit messages
+   - Changelog generation
+   - GitHub Release creation
+   - Package publishing to GitHub Packages
 
-## Contributing
+### License
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Original 2048 game by Gabriele Cirulli
-- Inspired by functional programming principles
-- Built with TypeScript for type safety 
+MIT 
