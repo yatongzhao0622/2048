@@ -52,6 +52,17 @@ describe('Random Utils', () => {
 
       expect(result1).toBe(result2);
     });
+
+    test('should select last value when random number is 1', () => {
+      const values = [
+        { value: 2, weight: 9 },
+        { value: 4, weight: 1 },
+      ];
+      const randomNumber = 1;
+
+      const result = selectWeightedValue(values, randomNumber);
+      expect(result).toBe(4); // Should select the last value
+    });
   });
 
   describe('_placeNewTileOnBoard', () => {
